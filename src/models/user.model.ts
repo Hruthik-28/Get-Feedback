@@ -8,7 +8,7 @@ export interface Message extends Document {
 const MessageSchema: Schema<Message> = new Schema({
     content: {
         type: String,
-        requireed: [true, "content is required"],
+        required: [true, "content is required"],
     },
     createdAt: {
         type: Date,
@@ -69,6 +69,6 @@ const UserSchema: Schema<User> = new Schema({
     },
 });
 
-const User = (models.users as Model<User>) || model<User>("User", UserSchema);
+const UserModel = (models.User as Model<User>) || model<User>("User", UserSchema);
 
-export default User;
+export default UserModel;
