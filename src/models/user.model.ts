@@ -33,7 +33,6 @@ const UserSchema: Schema<User> = new Schema({
         type: String,
         required: [true, "username is required"],
         trim: true,
-        unique: true,
     },
     email: {
         type: String,
@@ -69,6 +68,7 @@ const UserSchema: Schema<User> = new Schema({
     },
 });
 
-const UserModel = (models.User as Model<User>) || model<User>("User", UserSchema);
+const UserModel =
+    (models.User as Model<User>) || model<User>("User", UserSchema);
 
 export default UserModel;
