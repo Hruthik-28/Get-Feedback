@@ -1,7 +1,7 @@
 "use client";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
+import * as z from "zod";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useDebounceValue } from "usehooks-ts";
