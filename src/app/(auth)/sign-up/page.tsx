@@ -22,6 +22,8 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Loader2 } from "lucide-react";
+import logoSvg from "../../../../public/Logo/SVG/main-logo-black-transparent.svg";
+import Image from "next/image";
 
 function Page() {
     const [username, setUsername] = useState("");
@@ -33,7 +35,6 @@ function Page() {
         username,
         500
     );
-    const { toast } = useToast();
     const router = useRouter();
 
     // zod implementaion in react hook form
@@ -55,14 +56,14 @@ function Page() {
                     const response = await axios.get(
                         `/api/check-username-unique?username=${debouncedUsername}`
                     );
-                    setUsernameMessage(response.data?.message);
+                    let message = response.data.message;
+                    setUsernameMessage(message);
                 } catch (error: any) {
-                    console.log(error);
                     const axiosError = error as AxiosError<ApiResponse>;
-                    setUsernameMessage(
+                    let usernameError =
                         axiosError.response?.data.message ||
-                            "Error checking unique username"
-                    );
+                        "Error checking unique username";
+                    setUsernameMessage(usernameError);
                 } finally {
                     setIsCheckinngUsername(false);
                 }
@@ -99,8 +100,17 @@ function Page() {
 
     return (
         <>
-            <main className="w-full min-h-screen grid place-items-center">
-                <div className="w-96 border p-8 shadow-md rounded-lg ">
+            <main className="w-full min-h-screen flex justify-center items-center">
+                <div className="w-full sm:max-w-md max-w-4xl border sm:p-8 p-6 shadow-md rounded-lg">
+                    <Image
+                        src={logoSvg}
+                        alt="logoSvg"
+                        className="w-full h-28 object-cover scale-75"
+                    />
+                    <h4 className="font-normal text-center py-4 sm:text-lg text-sm ">
+                        <span className="font-semibold underline">SignUp</span>{" "}
+                        now to get your feedbacks
+                    </h4>
                     <Form {...form}>
                         <form
                             onSubmit={form.handleSubmit(onSubmit)}
@@ -122,8 +132,21 @@ function Page() {
                                                 }}
                                             />
                                         </FormControl>
-                                        <FormDescription className="text-green-500 font-medium">
-                                            {usernameMessage && usernameMessage}
+                                        <FormDescription>
+                                            {isCheckingUsername && (
+                                                <Loader2 className="text-black ml-2 w-8 h-8 animate-spin " />
+                                            )}
+                                            <span
+                                                className={`text-sm font-semibold ${
+                                                    usernameMessage ===
+                                                    "username is available"
+                                                        ? "text-green-500"
+                                                        : "text-red-500"
+                                                }`}
+                                            >
+                                                {usernameMessage &&
+                                                    usernameMessage}
+                                            </span>
                                         </FormDescription>
                                         <FormMessage />
                                     </FormItem>
@@ -141,6 +164,10 @@ function Page() {
                                                 {...field}
                                             />
                                         </FormControl>
+                                        <FormDescription className="opacity-75">
+                                            we will send you a verification
+                                            email
+                                        </FormDescription>
                                         <FormMessage />
                                     </FormItem>
                                 )}
@@ -179,7 +206,9 @@ function Page() {
                     <div className="text-center mt-4">
                         <span>Already have an account? </span>
                         <Link href={"/sign-in"}>
-                            <span className="font-semibold">SignIn</span>
+                            <span className="font-semibold underline hover:underline-offset-2">
+                                SignIn
+                            </span>
                         </Link>
                     </div>
                 </div>
