@@ -108,7 +108,7 @@ function Page() {
                         className="w-full h-28 object-cover scale-75"
                     />
                     <h4 className="font-normal text-center py-4 sm:text-lg text-sm ">
-                        <span className="font-semibold underline">SignUp</span>{" "}
+                        <span className="font-semibold">SignUp</span>{" "}
                         now to get your feedbacks
                     </h4>
                     <Form {...form}>
@@ -206,7 +206,7 @@ function Page() {
                     <div className="text-center mt-4">
                         <span>Already have an account? </span>
                         <Link href={"/sign-in"}>
-                            <span className="font-semibold underline hover:underline-offset-2">
+                            <span className="font-semibold underline hover:underline-offset-2 ">
                                 SignIn
                             </span>
                         </Link>
