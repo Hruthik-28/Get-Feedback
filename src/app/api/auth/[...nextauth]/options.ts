@@ -43,11 +43,10 @@ export const authOptions: NextAuthOptions = {
                         );
                     }
 
-                    const passwordMatch = bcrypt.compare(
+                    const passwordMatch = await bcrypt.compare(
                         credentials.password,
                         user.password
                     );
-
                     if (!passwordMatch) {
                         throw new Error("Incorrect Password");
                     }
@@ -70,7 +69,7 @@ export const authOptions: NextAuthOptions = {
             return token;
         },
         async session({ session, token }) {
-            if (token) {
+            if (token && token.user) {
                 session.user._id = token.user._id;
                 session.user.username = token.user.username;
                 session.user.isVerified = token.user.isVerified;
