@@ -4,10 +4,14 @@ import type { NextRequest } from "next/server";
 export { default } from "next-auth/middleware";
 
 export async function middleware(request: NextRequest) {
-    const token = await getToken({ req: request });
+    const token = await getToken({
+        req: request,
+        secret: process.env.NEXT_AUTH_SECRET,
+    });
     const path = request.nextUrl.pathname;
 
-    const isPublicPath = path === "/sign-in" || path === "/sign-up" || path === "/verify";
+    const isPublicPath =
+        path === "/sign-in" || path === "/sign-up" || path === "/verify";
 
     if (token && isPublicPath) {
         return NextResponse.redirect(new URL("/dashboard", request.url));
@@ -18,5 +22,11 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-    matcher: ["/", "/sign-in", "/sign-up", "/dashboard", "/verify"],
+    matcher: [
+        "/",
+        "/sign-in",
+        "/sign-up",
+        "/dashboard/:path*",
+        "/verify/:path*",
+    ],
 };
