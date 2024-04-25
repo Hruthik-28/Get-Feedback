@@ -6,7 +6,6 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { toast, useToast } from "@/components/ui/use-toast";
 import { useRouter } from "next/navigation";
-import axios, { AxiosError } from "axios";
 import { ApiResponse } from "@/types/ApiResponse";
 import { Button } from "@/components/ui/button";
 import {
@@ -23,39 +22,45 @@ import { Loader2 } from "lucide-react";
 import logoSvg from "../../../../public/Logo/SVG/main-logo-black-transparent.svg";
 import Image from "next/image";
 import { signInSchema } from "@/schemas/signIn.schema";
+import { signIn } from "next-auth/react";
 
 function Page() {
     const router = useRouter();
     const [isSigningIn, setIsSigningIn] = useState(false);
-    
+
     const form = useForm<z.infer<typeof signInSchema>>({
         resolver: zodResolver(signInSchema),
-        defaultValues: {
-            identifier: "",
-            password: "",
-        },
     });
 
     const onSubmit = async (data: z.infer<typeof signInSchema>) => {
-        try {
-            setIsSigningIn(true);
-            const response = await axios.post<ApiResponse>("/api/sign-in");
-            toast({
-                title: "SignIn Success",
-                description: response.data?.message,
-            });
+        setIsSigningIn(true);
+        const result = await signIn("credentials", {
+            ...data,
+            redirect: false,
+        });
+        // console.log(result);
+        if (result?.error) {
+            if (result.error === "CredentialsSignIn") {
+                toast({
+                    title: "SignIn Failed",
+                    description: "Invalid credentials",
+                    variant: "destructive",
+                });
+                setIsSigningIn(false);
+            } else {
+                toast({
+                    title: "SignIn Failed",
+                    description: result.error,
+                });
+                setIsSigningIn(false);
+            }
+        }
+
+        if (result?.ok) {
             router.push("/dashboard");
-        } catch (error) {
-            const axiosError = error as AxiosError<ApiResponse>;
-            toast({
-                title: "SignIn Failed",
-                description: axiosError.response?.data.message,
-                variant: "destructive"
-            });
-        } finally {
-            setIsSigningIn(false);
         }
     };
+
     return (
         <>
             <main className="w-full min-h-screen flex justify-center items-center">
@@ -110,6 +115,7 @@ function Page() {
                             <Button
                                 type="submit"
                                 className="w-full"
+                                disabled={isSigningIn}
                             >
                                 {isSigningIn ? (
                                     <>
