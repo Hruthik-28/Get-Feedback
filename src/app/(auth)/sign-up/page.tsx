@@ -108,8 +108,8 @@ function Page() {
                         className="w-full h-28 object-cover scale-75"
                     />
                     <h4 className="font-normal text-center py-4 sm:text-lg text-sm ">
-                        <span className="font-semibold">SignUp</span>{" "}
-                        now to get your feedbacks
+                        <span className="font-semibold">SignUp</span> now to get
+                        your feedbacks
                     </h4>
                     <Form {...form}>
                         <form
@@ -192,6 +192,7 @@ function Page() {
                             <Button
                                 type="submit"
                                 className="w-full"
+                                disabled={isSubmitting}
                             >
                                 {isSubmitting ? (
                                     <>
