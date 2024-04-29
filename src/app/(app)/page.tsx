@@ -13,6 +13,7 @@ import {
 import Autoplay from "embla-carousel-autoplay";
 import React from "react";
 import { Mail } from "lucide-react";
+import Footer from "@/components/Footer";
 
 function Page() {
     const content = [
@@ -76,6 +77,7 @@ function Page() {
                     </CarouselContent>
                 </Carousel>
             </main>
+            <Footer />
         </>
     );
 }
