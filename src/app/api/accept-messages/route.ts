@@ -44,8 +44,8 @@ export async function POST(request: Request) {
         return Response.json(
             {
                 success: true,
-                message: "Message acceptance status toggled successfully",
-                user,
+                message: "Message acceptance status updated successfully",
+                acceptMessages: updatedUser.acceptMessages,
             },
             { status: 200 }
         );
