@@ -10,13 +10,14 @@ export async function middleware(request: NextRequest) {
     });
     const path = request.nextUrl.pathname;
 
-    const isPublicPath =
-        path === "/sign-in" || path === "/sign-up" || path === "/verify";
-
-    if (token && isPublicPath) {
+    if (
+        (token && path.startsWith("/sign-in")) ||
+        path.startsWith("/sign-up") ||
+        path.startsWith("/verify")
+    ) {
         return NextResponse.redirect(new URL("/dashboard", request.url));
     }
-    if (!token && !isPublicPath) {
+    if (!token && path.startsWith("/dashboard")) {
         return NextResponse.redirect(new URL("/sign-in", request.url));
     }
 }
