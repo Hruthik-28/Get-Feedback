@@ -3,15 +3,13 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import {  useState } from "react";
 import { toast, useToast } from "@/components/ui/use-toast";
 import { useRouter } from "next/navigation";
-import { ApiResponse } from "@/types/ApiResponse";
 import { Button } from "@/components/ui/button";
 import {
     Form,
     FormControl,
-    FormDescription,
     FormField,
     FormItem,
     FormLabel,
@@ -38,7 +36,7 @@ function Page() {
             ...data,
             redirect: false,
         });
-        // console.log(result);
+
         if (result?.error) {
             if (result.error === "CredentialsSignIn") {
                 toast({
