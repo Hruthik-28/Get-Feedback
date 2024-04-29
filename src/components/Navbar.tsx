@@ -33,7 +33,7 @@ function Navbar() {
                 {session ? (
                     <>
                         <h4>Hello, {user?.username || user?.email}</h4>
-                        <Button onClick={() => signOut}>Logout</Button>
+                        <Button onClick={() => signOut()}>Logout</Button>
                     </>
                 ) : (
                     <>

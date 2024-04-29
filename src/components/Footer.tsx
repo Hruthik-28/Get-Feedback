@@ -6,8 +6,8 @@ function Footer() {
     const year = new Date().getFullYear();
     return (
         <>
-            <footer className="w-full h-10 text-center absolute bottom-0">
-                © {year} Get Feedback by{" "}
+            <footer className="w-full border-t h-14 flex justify-center items-center absolute bottom-0">
+                © {year} Get Feedback by&nbsp;
                 <Link
                     target="_blank"
                     href={"https://hruthikportfolio.netlify.app/"}

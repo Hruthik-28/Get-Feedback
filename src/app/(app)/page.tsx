@@ -36,7 +36,7 @@ function Page() {
 
     return (
         <>
-            <main className="w-full min-h-[90vh] flex flex-col justify-center items-center space-y-12 border p-4">
+            <main className="w-full min-h-[90vh] flex flex-col justify-center items-center space-y-12 p-4">
                 <div className="space-y-4">
                     <h1 className="sm:text-5xl text-4xl text-center font-bold">
                         Want to get feedback from shadows ?
