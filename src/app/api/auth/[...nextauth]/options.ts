@@ -18,7 +18,7 @@ export const authOptions: NextAuthOptions = {
                 password: {
                     label: "Password",
                     type: "password",
-                    placeholder: "Enter your  password",
+                    placeholder: "Enter your password",
                 },
             },
             async authorize(credentials: any, req): Promise<any> {
@@ -69,11 +69,11 @@ export const authOptions: NextAuthOptions = {
             return token;
         },
         async session({ session, token }) {
-            if (token && token.user) {
-                session.user._id = token.user._id;
-                session.user.username = token.user.username;
-                session.user.isVerified = token.user.isVerified;
-                session.user.acceptMessages = token.user.acceptMessages;
+            if (token) {
+                session.user._id = token._id;
+                session.user.username = token.username;
+                session.user.isVerified = token.isVerified;
+                session.user.acceptMessages = token.acceptMessages;
             }
             return session;
         },
