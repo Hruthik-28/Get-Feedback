@@ -13,13 +13,8 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { acceptMessageSchema } from "@/schemas/acceptMessage.schema";
 import { Separator } from "@/components/ui/separator";
-import { Loader2, RefreshCcw, X } from "lucide-react";
-import {
-    Card,
-    CardDescription,
-    CardFooter,
-    CardTitle,
-} from "@/components/ui/card";
+import { Loader2, RefreshCcw } from "lucide-react";
+import MessageCard from "@/components/MessageCard";
 
 function Page() {
     const { data: session } = useSession();
@@ -122,12 +117,34 @@ function Page() {
         });
     };
 
+    const deleteMessage = async (messageId: any) => {
+        try {
+            const response = await axios.delete<ApiResponse>(
+                `/api/delete-message?messageId=${messageId}`
+            );
+            SetMessages(
+                messages.filter((message) => message._id !== messageId)
+            );
+            toast({
+                title: "Deletion Success",
+                description: response?.data.message,
+            });
+        } catch (error) {
+            const axiosError = error as AxiosError<ApiResponse>;
+            toast({
+                title: "Deletion Failed",
+                description: axiosError.response?.data.message,
+                variant: "destructive",
+            });
+        }
+    };
+
     if (!session || !session.user) return <></>;
 
     return (
         <>
             <main className="w-full flex justify-center p-8">
-                <div className="w-full max-w-4xl space-y-6">
+                <div className="w-full max-w-6xl space-y-6">
                     <h1 className="text-4xl font-bold">
                         {user?.username}&apos;s Dashboard
                     </h1>
@@ -170,6 +187,18 @@ function Page() {
                             <RefreshCcw className="h-4 w-4" />
                         )}
                     </Button>
+                    <section className="grid grid-cols-2 gap-2 ">
+                        {messages &&
+                            messages.map((message) => (
+                                <>
+                                    <MessageCard
+                                        message={message}
+                                        key={message._id}
+                                        removeMessage={deleteMessage}
+                                    />
+                                </>
+                            ))}
+                    </section>
                 </div>
             </main>
         </>
