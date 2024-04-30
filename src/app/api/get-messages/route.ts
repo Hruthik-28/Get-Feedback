@@ -24,7 +24,7 @@ export async function GET(request: Request) {
         const foundUser = await UserModel.aggregate([
             {
                 $match: {
-                    id: new mongoose.Types.ObjectId(user._id),
+                    _id: new mongoose.Types.ObjectId(user._id),
                 },
             },
             {
@@ -56,7 +56,8 @@ export async function GET(request: Request) {
         return Response.json(
             {
                 success: true,
-                message: foundUser[0]?.messages,
+                messages: foundUser[0]?.messages,
+                message: "Messages fetched successfully"
             },
             { status: 200 }
         );
