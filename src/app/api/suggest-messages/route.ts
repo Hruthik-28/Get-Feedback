@@ -1,54 +1,48 @@
-import { OpenAIStream, StreamingTextResponse } from "ai";
-import OpenAI from "openai";
+import { GoogleGenerativeAI } from "@google/generative-ai";
+import { GoogleGenerativeAIStream, StreamingTextResponse } from "ai";
 
-export const openai = new OpenAI({
-    apiKey: process.env.OPENAI_API_KEY,
-});
+const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY || "");
 
-export const runtime = "edge";
+export const dynamic = "force-dynamic";
 
 export async function POST(req: Request) {
     try {
         const prompt =
             "Create a list of three open-ended and engaging questions formatted as a single string. Each question should be separated by '||'. These questions are for an anonymous social messaging platform, like Qooh.me, and should be suitable for a diverse audience. Avoid personal or sensitive topics, focusing instead on universal themes that encourage friendly interaction. For example, your output should be structured like this: 'What's a hobby you've recently started? || If you could have dinner with any historical figure, who would it be? || What's a simple thing that makes you happy?'. Ensure the questions are intriguing, foster curiosity, and contribute to a positive and welcoming conversational environment.";
-        let response;
+
         try {
-            response = await openai.completions.create({
-                model: "gpt-3.5-turbo-instruct",
-                max_tokens: 400,
-                stream: false,
-                prompt,
-            });
-        } catch (error) {
-            console.error(error);
-            return Response.json({ success: false, error }, { status: 200 });
-        }
+            const response = await genAI
+                .getGenerativeModel({ model: "gemini-pro" })
+                .generateContentStream({
+                    contents: [{ role: "user", parts: [{ text: prompt }] }],
+                });
 
-        // // Convert the response into a friendly text-stream
-        // const stream = OpenAIStream(response);
-        // // Respond with the stream
-        // const message = new StreamingTextResponse(stream);
+            const stream = GoogleGenerativeAIStream(response);
 
-        return Response.json(
-            { success: true, message: response },
-            { status: 200 }
-        );
-    } catch (error: any) {
-        if (error instanceof OpenAI.APIError) {
-            const { name, status, headers, message } = error;
+            return new StreamingTextResponse(stream);
+        } catch (error: any) {
             Response.json(
                 {
                     success: false,
-                    name,
-                    status,
-                    headers,
-                    message,
+                    message:
+                        error?.message ||
+                        "Error getting response from googleAI",
+                    error,
                 },
-                { status }
+                { status: 500 }
             );
-        } else {
-            console.error("An unexpected error occured", error);
-            throw error;
         }
+    } catch (error: any) {
+        console.error(error);
+        Response.json(
+            {
+                success: false,
+                message:
+                    error?.message || "Error getting response from googleAI",
+                error,
+            },
+            { status: 500 }
+        );
+        throw error;
     }
 }
