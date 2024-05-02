@@ -3,6 +3,7 @@ import { NextAuthOptions } from "next-auth";
 import UserModel from "@/models/user.model";
 import dbConnect from "@/lib/dbConnect";
 import bcrypt from "bcryptjs";
+import GoogleProvider from "next-auth/providers/google";
 
 export const authOptions: NextAuthOptions = {
     providers: [
@@ -57,18 +58,41 @@ export const authOptions: NextAuthOptions = {
                 }
             },
         }),
+        GoogleProvider({
+            clientId: process.env.GOOGLE_CLIENT_ID!,
+            clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+        }),
     ],
     callbacks: {
-        async jwt({ token, user }) {
+        async jwt({ token, user, account, profile }) {
             if (user) {
                 token._id = user._id?.toString();
                 token.username = user.username;
                 token.isVerified = user.isVerified;
                 token.acceptMessages = user.acceptMessages;
             }
+            if (account?.provider === "google") {
+                const { email, email_verified, name } = profile;
+
+                if (email.endsWith("@gmail.com") && email_verified) {
+                    try {
+                        await dbConnect();
+                        const foundUser = await UserModel.findOne({ email });
+
+                        token._id = foundUser?._id.toString();
+                        token.username = foundUser?.username;
+                        token.isVerified = foundUser?.isVerified;
+                        token.acceptMessages = foundUser?.acceptMessages;
+                    } catch (error) {
+                        console.error("Error signing in with Google", error);
+                        throw new Error("Error signing in with Google");
+                    }
+                }
+            }
             return token;
         },
         async session({ session, token }) {
+            // console.log(session);
             if (token) {
                 session.user._id = token._id;
                 session.user.username = token.username;
@@ -76,6 +100,44 @@ export const authOptions: NextAuthOptions = {
                 session.user.acceptMessages = token.acceptMessages;
             }
             return session;
+        },
+        async signIn({ account, profile }) {
+            if (account?.provider === "google") {
+                const { email, email_verified } = profile;
+
+                if (email.endsWith("@gmail.com") && email_verified) {
+                    try {
+                        await dbConnect();
+                        let foundUser = await UserModel.findOne({ email });
+
+                        if (!foundUser) {
+                            const randomNum = Math.floor(
+                                100 + Math.random() * 900
+                            ).toString();
+                            const new_user = new UserModel(
+                                {
+                                    username: profile?.name?.concat(randomNum),
+                                    email,
+                                    isVerified: true,
+                                    acceptMessages: true,
+                                },
+                                { validateBeforeSave: false }
+                            );
+                            await new_user.save({ validateBeforeSave: false });
+                        }
+
+                        return true;
+                    } catch (error) {
+                        console.error("Error signing in with Google", error);
+                        throw new Error("Error signing in with Google");
+                    }
+                }
+                return false;
+            }
+            return true;
+        },
+        async redirect({ url, baseUrl }) {
+            return baseUrl;
         },
     },
     pages: {
