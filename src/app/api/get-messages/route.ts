@@ -47,7 +47,7 @@ export async function GET(request: Request) {
             return Response.json(
                 {
                     success: false,
-                    message: "User not found",
+                    message: "No Messages to display",
                 },
                 { status: 404 }
             );

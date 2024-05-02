@@ -24,6 +24,9 @@ import { Input } from "@/components/ui/input";
 import { Loader2 } from "lucide-react";
 import logoSvg from "../../../../public/Logo/SVG/main-logo-black-transparent.svg";
 import Image from "next/image";
+import googleSvg from "../../../../public/Logo/google.svg";
+import { Separator } from "@/components/ui/separator";
+import { signIn } from "next-auth/react";
 
 function Page() {
     const [username, setUsername] = useState("");
@@ -100,118 +103,136 @@ function Page() {
 
     return (
         <>
-            <main className="w-full min-h-screen flex justify-center items-center">
-                <div className="w-full sm:max-w-md max-w-4xl border sm:p-8 p-6 shadow-md rounded-lg">
-                    <Image
-                        src={logoSvg}
-                        alt="logoSvg"
-                        className="w-full h-28 object-cover scale-75"
-                    />
-                    <h4 className="font-normal text-center py-4 sm:text-lg text-sm ">
-                        <span className="font-semibold">SignUp</span> now to get
-                        your feedbacks
-                    </h4>
-                    <Form {...form}>
-                        <form
-                            onSubmit={form.handleSubmit(onSubmit)}
-                            className="space-y-6"
+            <main className="w-full min-h-[90vh] flex justify-center items-center">
+                <div className="w-full sm:max-w-2xl max-w-4xl border sm:p-8 p-6 shadow-md rounded-lg flex sm:flex-row flex-col sm:justify-between sm:items-center sm:gap-4">
+                    <section className="">
+                        <Image
+                            src={logoSvg}
+                            alt="logoSvg"
+                            className="w-full h-14 object-cover scale-75"
+                        />
+                        <h4 className="font-normal text-center py-4 sm:text-lg text-sm ">
+                            <span className="font-semibold">SignUp</span> now to
+                            get your feedbacks
+                        </h4>
+                        <Button
+                            onClick={() => signIn("google")}
+                            className="mt-4 w-full"
                         >
-                            <FormField
-                                control={form.control}
-                                name="username"
-                                render={({ field, fieldState }) => (
-                                    <FormItem>
-                                        <FormLabel>Username</FormLabel>
-                                        <FormControl>
-                                            <Input
-                                                placeholder="Enter your username"
-                                                {...field}
-                                                onChange={(e) => {
-                                                    field.onChange(e);
-                                                    setUsername(e.target.value);
-                                                }}
-                                            />
-                                        </FormControl>
-                                        <FormDescription>
-                                            {isCheckingUsername && (
-                                                <Loader2 className="text-black ml-2 w-8 h-8 animate-spin " />
-                                            )}
-                                            <span
-                                                className={`text-sm font-semibold ${
-                                                    usernameMessage ===
-                                                    "username is available"
-                                                        ? "text-green-500"
-                                                        : "text-red-500"
-                                                }`}
-                                            >
-                                                {usernameMessage &&
-                                                    usernameMessage}
-                                            </span>
-                                        </FormDescription>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-                            <FormField
-                                control={form.control}
-                                name="email"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>Email</FormLabel>
-                                        <FormControl>
-                                            <Input
-                                                placeholder="Enter your email"
-                                                {...field}
-                                            />
-                                        </FormControl>
-                                        <FormDescription className="opacity-75">
-                                            we will send you a verification
-                                            email
-                                        </FormDescription>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-                            <FormField
-                                control={form.control}
-                                name="password"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>Password</FormLabel>
-                                        <FormControl>
-                                            <Input
-                                                placeholder="Enter your password"
-                                                type="password"
-                                                {...field}
-                                            />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-                            <Button
-                                type="submit"
-                                className="w-full"
-                                disabled={isSubmitting}
+                            <Image
+                                src={googleSvg}
+                                alt="googleSvg"
+                                className="scale-50"
+                                onClick={() => signIn("google")}
+                            ></Image>
+                            Google
+                        </Button>
+                    </section>
+                    <section className="">
+                        <Form {...form}>
+                            <form
+                                onSubmit={form.handleSubmit(onSubmit)}
+                                className="space-y-6"
                             >
-                                {isSubmitting ? (
-                                    <>
-                                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                    </>
-                                ) : (
-                                    "Submit"
-                                )}
-                            </Button>
-                        </form>
-                    </Form>
-                    <div className="text-center mt-4">
-                        <span>Already have an account? </span>
-                        <Link href={"/sign-in"}>
-                            <span className="font-semibold underline hover:underline-offset-2 ">
-                                SignIn
-                            </span>
-                        </Link>
-                    </div>
+                                <FormField
+                                    control={form.control}
+                                    name="username"
+                                    render={({ field, fieldState }) => (
+                                        <FormItem>
+                                            <FormLabel>Username</FormLabel>
+                                            <FormControl>
+                                                <Input
+                                                    placeholder="Enter your username"
+                                                    {...field}
+                                                    onChange={(e) => {
+                                                        field.onChange(e);
+                                                        setUsername(
+                                                            e.target.value
+                                                        );
+                                                    }}
+                                                />
+                                            </FormControl>
+                                            <FormDescription>
+                                                {isCheckingUsername && (
+                                                    <Loader2 className="text-black ml-2 w-8 h-8 animate-spin " />
+                                                )}
+                                                <span
+                                                    className={`text-sm font-semibold ${
+                                                        usernameMessage ===
+                                                        "username is available"
+                                                            ? "text-green-500"
+                                                            : "text-red-500"
+                                                    }`}
+                                                >
+                                                    {usernameMessage &&
+                                                        usernameMessage}
+                                                </span>
+                                            </FormDescription>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                                <FormField
+                                    control={form.control}
+                                    name="email"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Email</FormLabel>
+                                            <FormControl>
+                                                <Input
+                                                    placeholder="Enter your email"
+                                                    {...field}
+                                                />
+                                            </FormControl>
+                                            <FormDescription className="opacity-75">
+                                                we will send you a verification
+                                                email
+                                            </FormDescription>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                                <FormField
+                                    control={form.control}
+                                    name="password"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Password</FormLabel>
+                                            <FormControl>
+                                                <Input
+                                                    placeholder="Enter your password"
+                                                    type="password"
+                                                    {...field}
+                                                />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                                <Button
+                                    type="submit"
+                                    className="w-full"
+                                    disabled={isSubmitting}
+                                >
+                                    {isSubmitting ? (
+                                        <>
+                                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                        </>
+                                    ) : (
+                                        "Submit"
+                                    )}
+                                </Button>
+                            </form>
+                        </Form>
+                        <div className="text-center mt-4">
+                            <span>Already have an account? </span>
+                            <Link href={"/sign-in"}>
+                                <span className="font-semibold underline hover:underline-offset-2 ">
+                                    SignIn
+                                </span>
+                            </Link>
+                        </div>
+                    </section>
                 </div>
             </main>
         </>

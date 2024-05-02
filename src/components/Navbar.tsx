@@ -21,7 +21,7 @@ function Navbar() {
 
     return (
         <>
-            <nav className="w-full h-18 sticky top-0 border flex justify-between px-4 items-center overflow-hidden">
+            <nav className="w-full h-18 sticky bg-white top-0 border flex justify-between px-4 items-center overflow-hidden">
                 <div className="relative left-4">
                     <Image
                         src={logoSvg}

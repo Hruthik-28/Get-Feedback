@@ -60,16 +60,16 @@ function Page() {
                                     <CardTitle className="sm:text-2xl text-xl mb-5">
                                         {data.title}
                                     </CardTitle>
-                                    <CardDescription className="flex dark:text-white text-black flex-col sm:flex-row sm:items-center items-start gap-4 ">
+                                    <CardDescription className="flex dark:text-white text-black  sm:items-center items-start gap-4 ">
                                         <Mail />
-                                        <div>
-                                            <p className="text-base sm:text-lg">
+                                        <span className="flex flex-col">
+                                            <span className="text-base sm:text-lg">
                                                 {data.message}
-                                            </p>
-                                            <p className="text-xs text-gray-500">
+                                            </span>
+                                            <span className="text-xs text-gray-500">
                                                 {data.time}
-                                            </p>
-                                        </div>
+                                            </span>
+                                        </span>
                                     </CardDescription>
                                 </Card>
                             </CarouselItem>

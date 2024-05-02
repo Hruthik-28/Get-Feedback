@@ -10,16 +10,16 @@ export async function middleware(request: NextRequest) {
     });
     const path = request.nextUrl.pathname;
 
-    if (
-        (token && path.startsWith("/sign-in")) ||
-        path.startsWith("/sign-up") ||
-        path.startsWith("/verify")
-    ) {
+    if ((token && path.startsWith("/sign-in")) || path.startsWith("/verify") || path === "/") {
         return NextResponse.redirect(new URL("/dashboard", request.url));
     }
     if (!token && path.startsWith("/dashboard")) {
         return NextResponse.redirect(new URL("/sign-in", request.url));
     }
+    if (!token && path.startsWith("/sign-up")) {
+        return NextResponse.next();
+    }
+    return NextResponse.next();
 }
 
 export const config = {

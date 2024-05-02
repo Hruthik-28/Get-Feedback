@@ -3,8 +3,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 import Link from "next/link";
-import {  useState } from "react";
-import { toast, useToast } from "@/components/ui/use-toast";
+import { useState } from "react";
+import { toast } from "@/components/ui/use-toast";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import {
@@ -21,6 +21,8 @@ import logoSvg from "../../../../public/Logo/SVG/main-logo-black-transparent.svg
 import Image from "next/image";
 import { signInSchema } from "@/schemas/signIn.schema";
 import { signIn } from "next-auth/react";
+import { Separator } from "@/components/ui/separator";
+import googleSvg from "../../../../public/Logo/google.svg";
 
 function Page() {
     const router = useRouter();
@@ -61,17 +63,29 @@ function Page() {
 
     return (
         <>
-            <main className="w-full min-h-screen flex justify-center items-center">
+            <main className="w-full min-h-[90vh] border flex justify-center items-center">
                 <div className="w-full sm:max-w-md max-w-4xl border sm:p-8 p-6 shadow-md rounded-lg">
                     <Image
                         src={logoSvg}
                         alt="logoSvg"
-                        className="w-full h-28 object-cover scale-75"
+                        className="w-full h-14 object-cover scale-75"
                     />
+
                     <h4 className="font-normal text-center py-4 sm:text-lg text-sm ">
                         <span className="font-semibold">SignIn</span> now to get
                         your feedbacks
                     </h4>
+                    <div className="mt-4">
+                        <Button
+                            onClick={() => signIn("google")}
+                            className="w-full"
+                        >
+                            <Image src={googleSvg} alt="googleSvg" className="scale-50"></Image>
+                            Google
+                        </Button>
+                    </div>
+                    <Separator className="my-4" />
+
                     <Form {...form}>
                         <form
                             onSubmit={form.handleSubmit(onSubmit)}
