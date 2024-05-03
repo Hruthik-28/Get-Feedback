@@ -145,7 +145,7 @@ function Page() {
         <>
             <main className="w-full flex justify-center p-8">
                 <div className="w-full max-w-6xl space-y-6">
-                    <h1 className="text-4xl font-bold">
+                    <h1 className="sm:text-4xl text-xl font-bold">
                         {user?.username}&apos;s Dashboard
                     </h1>
                     <div className="flex flex-col space-y-3 ">
@@ -187,7 +187,7 @@ function Page() {
                             <RefreshCcw className="h-4 w-4" />
                         )}
                     </Button>
-                    <section className="grid grid-cols-2 gap-2 ">
+                    <section className="grid sm:grid-cols-2 grid-cols-1 gap-2 ">
                         {messages &&
                             messages.map((message) => (
                                 <>

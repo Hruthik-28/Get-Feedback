@@ -1,44 +1,30 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import logoSvg from "../../public/Logo/SVG/main-logo.svg";
-import Image from "next/image";
 import { signOut, useSession } from "next-auth/react";
 import { Button } from "./ui/button";
 import { User } from "next-auth";
 import Link from "next/link";
-import { Moon, Sun } from "lucide-react";
-import { useTheme } from "next-themes";
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 function Navbar() {
     const { data: session } = useSession();
     const user: User = session?.user as User;
-    const { setTheme } = useTheme();
 
     return (
         <>
-            <nav className="w-full h-18 sticky bg-white top-0 border flex justify-between px-4 items-center overflow-hidden">
-                <div className="relative left-4">
-                    <Image
-                        src={logoSvg}
-                        alt="logoSvg"
-                        height={60}
-                        className="scale-150"
-                    />
-                </div>
+            <nav className="w-full h-16 bg-gray-800 text-white sticky z-50 top-0 border-b flex justify-between px-4 items-center overflow-hidden">
+                <Link href={"/"}>
+                    <h1 className="font-bold underline underline-offset-4 hover:underline-offset-8">GetFeedback</h1>
+                </Link>
                 {session ? (
                     <>
-                        <h4>Hello, {user?.username || user?.email}</h4>
-                        <Button onClick={() => signOut()}>Logout</Button>
+                        <h4 className="sm:text-lg text-xs">
+                            Hello, {user?.username || user?.email}
+                        </h4>
+                        <Button variant={'secondary'} onClick={() => signOut()}>Logout</Button>
                     </>
                 ) : (
                     <>
                         <Link href={"/sign-in"}>
-                            <Button>SignIn</Button>
+                            <Button variant={'secondary'}>SignIn</Button>
                         </Link>
                     </>
                 )}
