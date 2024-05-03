@@ -25,8 +25,8 @@ import { Loader2 } from "lucide-react";
 import logoSvg from "../../../../public/Logo/SVG/main-logo-black-transparent.svg";
 import Image from "next/image";
 import googleSvg from "../../../../public/Logo/google.svg";
-import { Separator } from "@/components/ui/separator";
 import { signIn } from "next-auth/react";
+import githubSvg from "../../../../public/Logo/github.svg";
 
 function Page() {
     const [username, setUsername] = useState("");
@@ -127,6 +127,15 @@ function Page() {
                             ></Image>
                             Google
                         </Button>
+                        <div className="mt-4">
+                        <Button
+                            onClick={() => signIn("github")}
+                            className="w-full"
+                        >
+                            <Image src={githubSvg} alt="githubSvg" className="scale-50 -ml-6 p-1"></Image>
+                            <span className="-ml-5">Github</span>
+                        </Button>
+                    </div>
                     </section>
                     <section className="">
                         <Form {...form}>

@@ -23,6 +23,7 @@ import { signInSchema } from "@/schemas/signIn.schema";
 import { signIn } from "next-auth/react";
 import { Separator } from "@/components/ui/separator";
 import googleSvg from "../../../../public/Logo/google.svg";
+import githubSvg from "../../../../public/Logo/github.svg";
 
 function Page() {
     const router = useRouter();
@@ -63,12 +64,12 @@ function Page() {
 
     return (
         <>
-            <main className="w-full min-h-[90vh] border flex justify-center items-center">
+            <main className="w-full  border flex justify-center items-center">
                 <div className="w-full sm:max-w-md max-w-4xl border sm:p-8 p-6 shadow-md rounded-lg">
                     <Image
                         src={logoSvg}
                         alt="logoSvg"
-                        className="w-full h-14 object-cover scale-75"
+                        className="w-full h-14 object-cover scale-50"
                     />
 
                     <h4 className="font-normal text-center py-4 sm:text-lg text-sm ">
@@ -82,6 +83,15 @@ function Page() {
                         >
                             <Image src={googleSvg} alt="googleSvg" className="scale-50"></Image>
                             Google
+                        </Button>
+                    </div>
+                    <div className="mt-4">
+                        <Button
+                            onClick={() => signIn("github")}
+                            className="w-full"
+                        >
+                            <Image src={githubSvg} alt="githubSvg" className="scale-50 -ml-6 p-1"></Image>
+                            <span className="-ml-5">Github</span>
                         </Button>
                     </div>
                     <Separator className="my-4" />
