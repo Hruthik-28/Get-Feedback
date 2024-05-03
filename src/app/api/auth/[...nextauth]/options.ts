@@ -4,6 +4,7 @@ import UserModel from "@/models/user.model";
 import dbConnect from "@/lib/dbConnect";
 import bcrypt from "bcryptjs";
 import GoogleProvider from "next-auth/providers/google";
+import GitHubProvider from "next-auth/providers/github";
 
 export const authOptions: NextAuthOptions = {
     providers: [
@@ -62,6 +63,10 @@ export const authOptions: NextAuthOptions = {
             clientId: process.env.GOOGLE_CLIENT_ID!,
             clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
         }),
+        GitHubProvider({
+            clientId: process.env.GITHUB_ID!,
+            clientSecret: process.env.GITHUB_SECRET!,
+        }),
     ],
     callbacks: {
         async jwt({ token, user, account, profile }) {
@@ -71,10 +76,14 @@ export const authOptions: NextAuthOptions = {
                 token.isVerified = user.isVerified;
                 token.acceptMessages = user.acceptMessages;
             }
-            if (account?.provider === "google") {
-                const { email, email_verified, name } = profile;
+            if (
+                (account?.provider === "github" ||
+                    account?.provider === "google") &&
+                profile
+            ) {
+                const { email } = profile;
 
-                if (email.endsWith("@gmail.com") && email_verified) {
+                if (email?.endsWith("@gmail.com")) {
                     try {
                         await dbConnect();
                         const foundUser = await UserModel.findOne({ email });
@@ -102,10 +111,13 @@ export const authOptions: NextAuthOptions = {
             return session;
         },
         async signIn({ account, profile }) {
-            if (account?.provider === "google") {
-                const { email, email_verified } = profile;
-
-                if (email.endsWith("@gmail.com") && email_verified) {
+            if (
+                (account?.provider === "github" ||
+                    account?.provider === "google") &&
+                profile
+            ) {
+                const { email, name } = profile;
+                if (email?.endsWith("@gmail.com")) {
                     try {
                         await dbConnect();
                         let foundUser = await UserModel.findOne({ email });
@@ -114,15 +126,14 @@ export const authOptions: NextAuthOptions = {
                             const randomNum = Math.floor(
                                 100 + Math.random() * 900
                             ).toString();
-                            const new_user = new UserModel(
-                                {
-                                    username: profile?.name?.concat(randomNum),
-                                    email,
-                                    isVerified: true,
-                                    acceptMessages: true,
-                                },
-                                { validateBeforeSave: false }
-                            );
+                            const username = name?.split(" ").join("-").concat(randomNum);
+                            const new_user = new UserModel({
+                                username,
+                                email,
+                                isVerified: true,
+                                acceptMessages: true,
+                            });
+
                             await new_user.save({ validateBeforeSave: false });
                         }
 
