@@ -20,7 +20,6 @@ function Page() {
     const { data: session } = useSession();
     const user: User = session?.user as User;
 
-    const [feedbackUrl, SetFeedbackUrl] = useState("");
     const [messages, SetMessages] = useState<Message[]>([]);
     const [loading, setLoading] = useState(false);
     const [isSwitchLoading, SetIsSwitchLoading] = useState(false);
@@ -108,7 +107,8 @@ function Page() {
         }
     };
 
-    const urlToCopy = `${window.location.origin}/u/${user?.username}`;
+    const baseUrl = process.env.NEXT_PUBLIC_NEXTAUTH_URL;
+    const urlToCopy = `${baseUrl}/u/${user?.username}`;
     const copyToClipboard = () => {
         navigator.clipboard.writeText(urlToCopy);
         toast({
@@ -145,7 +145,7 @@ function Page() {
         <>
             <main className="w-full flex justify-center p-8">
                 <div className="w-full max-w-6xl space-y-6">
-                    <h1 className="sm:text-4xl text-xl font-bold">
+                    <h1 className="sm:text-4xl text-lg font-bold">
                         {user?.username}&apos;s Dashboard
                     </h1>
                     <div className="flex flex-col space-y-3 ">
