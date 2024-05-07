@@ -15,6 +15,17 @@ import { acceptMessageSchema } from "@/schemas/acceptMessage.schema";
 import { Separator } from "@/components/ui/separator";
 import { Loader2, RefreshCcw } from "lucide-react";
 import MessageCard from "@/components/MessageCard";
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 function Page() {
     const { data: session } = useSession();
@@ -23,6 +34,7 @@ function Page() {
     const [messages, SetMessages] = useState<Message[]>([]);
     const [loading, setLoading] = useState(false);
     const [isSwitchLoading, SetIsSwitchLoading] = useState(false);
+    const [deleting, setDeleting] = useState(false);
 
     const form = useForm({
         resolver: zodResolver(acceptMessageSchema),
@@ -139,6 +151,31 @@ function Page() {
         }
     };
 
+    const deleteAllMessages = async () => {
+        try {
+            setDeleting(true);
+            const response = await axios.delete<ApiResponse>(
+                "/api/delete-all-messages"
+            );
+            if (response?.data?.success) {
+                SetMessages([]);
+                toast({
+                    title: "Delete Success",
+                    description: response?.data?.message,
+                });
+            }
+        } catch (error) {
+            const axiosError = error as AxiosError<ApiResponse>;
+            toast({
+                title: "Delete Failed",
+                description: axiosError.response?.data.message,
+                variant: "destructive",
+            });
+        } finally {
+            setDeleting(false);
+        }
+    };
+
     if (!session || !session.user) return <></>;
 
     return (
@@ -173,20 +210,62 @@ function Page() {
                         </span>
                     </div>
                     <Separator />
-                    <Button
-                        className="mt-4"
-                        variant="outline"
-                        onClick={(e) => {
-                            e.preventDefault();
-                            getMessages(true);
-                        }}
-                    >
-                        {loading ? (
-                            <Loader2 className="h-4 w-4 animate-spin" />
-                        ) : (
-                            <RefreshCcw className="h-4 w-4" />
+                    <div className="flex justify-between items-center">
+                        <Button
+                            className="mt-4"
+                            variant="outline"
+                            onClick={(e) => {
+                                e.preventDefault();
+                                getMessages(true);
+                            }}
+                        >
+                            {loading ? (
+                                <Loader2 className="h-4 w-4 animate-spin" />
+                            ) : (
+                                <RefreshCcw className="h-4 w-4" />
+                            )}
+                        </Button>
+                        {messages?.length > 0 && (
+                            <>
+                                <AlertDialog>
+                                    <AlertDialogTrigger>
+                                        <Button disabled={deleting}>
+                                            {deleting ? (
+                                                <>
+                                                    <Loader2 className="h-4 w-4 animate-spin mr-1" />
+                                                    Please wait
+                                                </>
+                                            ) : (
+                                                "Delete All Messages"
+                                            )}
+                                        </Button>
+                                    </AlertDialogTrigger>
+                                    <AlertDialogContent>
+                                        <AlertDialogHeader>
+                                            <AlertDialogTitle>
+                                                Are you absolutely sure?
+                                            </AlertDialogTitle>
+                                            <AlertDialogDescription>
+                                                This action cannot be undone.
+                                                This will permanently delete all
+                                                the messages recieved.
+                                            </AlertDialogDescription>
+                                        </AlertDialogHeader>
+                                        <AlertDialogFooter>
+                                            <AlertDialogCancel>
+                                                Cancel
+                                            </AlertDialogCancel>
+                                            <AlertDialogAction
+                                                onClick={deleteAllMessages}
+                                            >
+                                                Continue
+                                            </AlertDialogAction>
+                                        </AlertDialogFooter>
+                                    </AlertDialogContent>
+                                </AlertDialog>
+                            </>
                         )}
-                    </Button>
+                    </div>
                     <section className="grid sm:grid-cols-2 grid-cols-1 gap-2 ">
                         {messages &&
                             messages.map((message) => (
