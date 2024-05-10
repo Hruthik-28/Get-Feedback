@@ -14,7 +14,18 @@ import {
     AlertDialogTitle,
     AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from "@/components/ui/dialog";
+
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Button } from "./ui/button";
 
 function MessageCard({
     message,
@@ -26,13 +37,36 @@ function MessageCard({
     const handleDeleteMessage = () => removeMessage(message._id);
     return (
         <>
-            <Card className="w-full relative min-h-28 h-full border shadow-sm p-4 space-y-4 flex justify-between items-start">
+            <Card className="w-full relative min-h-28 h-full border shadow-sm p-4 space-y-4 flex justify-between items-start cursor-pointer">
                 <div>
-                    <ScrollArea className="h-[70px] ">
-                        <CardTitle className="sm:text-lg text-sm mr-1">
-                            {message?.content}
-                        </CardTitle>
-                    </ScrollArea>
+                    <Dialog>
+                        <DialogTrigger>
+                            <ScrollArea className="h-[70px]  text-start">
+                                <span className="sm:text-lg text-sm">
+                                    {message?.content}
+                                </span>
+                            </ScrollArea>
+                        </DialogTrigger>
+                        <DialogContent className="sm:max-w-[425px]">
+                            <DialogHeader>
+                                <DialogTitle>Viewing Feedback</DialogTitle>
+                                <DialogDescription>
+                                    <ScrollArea className="h-[250px] p-2">
+                                        {message?.content}
+                                    </ScrollArea>
+                                </DialogDescription>
+                            </DialogHeader>
+                            <DialogFooter>
+                                <Button
+                                    type="submit"
+                                    variant="destructive"
+                                    onClick={handleDeleteMessage}
+                                >
+                                    Delete Feedback
+                                </Button>
+                            </DialogFooter>
+                        </DialogContent>
+                    </Dialog>
 
                     <CardDescription className=" sm:text-sm text-xs mr-1">
                         {new Date(message?.createdAt).toLocaleString()}
