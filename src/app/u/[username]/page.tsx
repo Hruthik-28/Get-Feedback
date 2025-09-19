@@ -21,7 +21,7 @@ import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
-import { useCompletion } from "ai/react";
+import { useCompletion } from "@ai-sdk/react";
 import defaultSuggestions from "@/data/suggestions.json";
 
 function Page() {

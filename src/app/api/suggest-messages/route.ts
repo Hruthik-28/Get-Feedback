@@ -1,48 +1,41 @@
-import { GoogleGenerativeAI } from "@google/generative-ai";
-import { GoogleGenerativeAIStream, StreamingTextResponse } from "ai";
+import { createGoogleGenerativeAI } from "@ai-sdk/google";
+import { streamText } from "ai";
 
-const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY || "");
-
-export const dynamic = "force-dynamic";
+const google = createGoogleGenerativeAI({
+  apiKey: process.env.GOOGLE_API_KEY || "",
+});
 
 export async function POST(req: Request) {
-    try {
-        const prompt =
-            "Create a list of three open-ended and engaging questions formatted as a single string. Each question should be separated by '||'. These questions are for an anonymous social messaging platform, like Qooh.me, and should be suitable for a diverse audience. Avoid personal or sensitive topics, focusing instead on universal themes that encourage friendly interaction. For example, your output should be structured like this: 'What's a hobby you've recently started? || If you could have dinner with any historical figure, who would it be? || What's a simple thing that makes you happy?'. Ensure the questions are intriguing, foster curiosity, and contribute to a positive and welcoming conversational environment.";
+  const { promptInput } = await req.json();
 
-        try {
-            const response = await genAI
-                .getGenerativeModel({ model: "gemini-pro" })
-                .generateContentStream({
-                    contents: [{ role: "user", parts: [{ text: prompt }] }],
-                });
+  const prompt = `Create a list of three open-ended and engaging questions formatted as a single string.
+Each question should be separated by '||'.
+These questions are for an anonymous social messaging platform, like reddit.
+Avoid personal or sensitive topics, focusing on universal themes that encourage friendly interaction.
 
-            const stream = GoogleGenerativeAIStream(response);
+User input (randomizer): ${promptInput}.
+Make sure the suggestions are **different from previous ones**.`;
 
-            return new StreamingTextResponse(stream);
-        } catch (error: any) {
-            Response.json(
-                {
-                    success: false,
-                    message:
-                        error?.message ||
-                        "Error getting response from googleAI",
-                    error,
-                },
-                { status: 500 }
-            );
-        }
-    } catch (error: any) {
-        console.error(error);
-        Response.json(
-            {
-                success: false,
-                message:
-                    error?.message || "Error getting response from googleAI",
-                error,
-            },
-            { status: 500 }
-        );
-        throw error;
-    }
+  try {
+    const result = streamText({
+      model: google("gemini-2.5-flash-lite"),
+      prompt,
+      temperature: 1, // 1 adds max randomness
+    });
+
+    return result.toUIMessageStreamResponse();
+  } catch (error: any) {
+    console.error(error);
+    return new Response(
+      JSON.stringify({
+        success: false,
+        message: error?.message || "Error getting response from Google AI",
+        error,
+      }),
+      {
+        status: 500,
+        headers: { "Content-Type": "application/json" },
+      }
+    );
+  }
 }
