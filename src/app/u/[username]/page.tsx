@@ -64,7 +64,7 @@ function Page() {
 
     useEffect(() => {
         setCompletion(defaultSuggestions);
-    }, []);
+    }, [setCompletion]);
 
     const getStreamedResponse = () => {
         complete("");

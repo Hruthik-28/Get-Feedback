@@ -1,4 +1,4 @@
-import { Schema, Document, model, models, Model } from "mongoose";
+import { Schema, Document, model, models, Model, Types } from "mongoose";
 
 export interface Message extends Document {
   readonly _id: string;
@@ -19,6 +19,7 @@ const MessageSchema: Schema<Message> = new Schema({
 });
 
 export interface User extends Document {
+  _id: Types.ObjectId;
   username: string;
   email: string;
   password: string;
